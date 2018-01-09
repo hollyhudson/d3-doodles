@@ -7,3 +7,9 @@
 	font: 12px san-serif;
 	text-anchor: end;
 }
+
+.line {
+	fill: none;
+	stroke: steelblue;
+	stroke-width: 2px;	
+}
