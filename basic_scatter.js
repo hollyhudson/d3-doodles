@@ -1,8 +1,6 @@
 // set the dimensions and margins of the graph
-// make a margin object to make the margins easier to work with later
 let margin = {top: 20, right: 20, bottom: 30, left: 50};
 
-// See, now the margins are easier to work with
 let width = 960 - margin.left - margin.right;
 let height = 500 - margin.top - margin.bottom;
 
@@ -10,16 +8,8 @@ let height = 500 - margin.top - margin.bottom;
 let parseTime = d3.timeParse("%d-%b-%y");
 
 // set the ranges
-let x = d3.scaleTime().range([0, width]); // treat as date/time
-let y = d3.scaleLinear().range([height, 0]);
-
-// Define the line, create an array of x,y coordinates as part of the d3 obj.
-// This array will be used to define an svg path later. 
-// Note that we don't actually have data yet, we're just saying what to do
-// with the data to make the array once it arrives.
-let valueline = d3.line()
-	.x(function(d) {return x(d.date); }) 	
-	.y(function(d) {return y(d.close); }); 
+let xScale = d3.scaleTime().range([0, width]); // treat as date/time
+let yScale = d3.scaleLinear().range([height, 0]);
 
 // append the svg object to the body of the page
 // appends a 'group' element to 'svg'
@@ -30,7 +20,6 @@ let svg = d3.select("body").append("svg")
 		.attr("height", height + margin.top + margin.bottom)
 	.append("g")
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-	
 
 // Load the data
 // the variable 'data' will hold the data
@@ -46,24 +35,26 @@ d3.csv("data.csv", function(error, data) {
 	});
 
 	// scale the range of the data
-	x.domain(d3.extent(data, function(d) {return d.date; }));
-	y.domain([0, d3.max(data, function(d) {return d.close; })]);
+	xScale.domain(d3.extent(data, function(d) {return d.date; }));
+	yScale.domain([0, d3.max(data, function(d) {return d.close; })]);
 	
-	// add an svg path using the valueline array for coordinates
-	// the .data([data]) line joins the data to the path element
-	svg.append("path")
-		.data([data])
-		.attr("class", "line")
-		.attr("d", valueline);
+	// make scatter points, 'dot' is the label for the svg group of them
+	svg.selectAll("dot")
+			.data(data)
+		.enter().append("circle")
+			.attr("class", "scatter_points")
+			.attr("r", 5)
+			.attr("cx", function(d) { return xScale(d.date); })
+			.attr("cy", function(d) { return yScale(d.close); });
 
 	// add the x axis
 	// call() makes drawing happen
 	svg.append("g")
 		.attr("transform", "translate(0," + height + ")")
-		.call(d3.axisBottom(x)); // start from the lower left
+		.call(d3.axisBottom(xScale)); // start from the lower left
 
 	// add the y axis
 	svg.append("g")
-		.call(d3.axisLeft(y)); // the default position is (0,0), start there
+		.call(d3.axisLeft(yScale)); // the default position is (0,0), start there
 
 });

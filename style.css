@@ -13,3 +13,9 @@
 	stroke: steelblue;
 	stroke-width: 2px;	
 }
+
+.scatter_points {
+	fill: rgba(100, 100, 100, 0.5);
+	stroke: black;
+	stroke-width: 1px;
+}
