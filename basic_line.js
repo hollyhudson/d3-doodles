@@ -21,6 +21,12 @@ let valueline = d3.line()
 	.x(function(d) {return x(d.date); }) 	
 	.y(function(d) {return y(d.close); }); 
 
+// Make a curvier line
+let basisline = d3.line()
+	.curve(d3.curveBasis)
+	.x(function(d) {return x(d.date); }) 	
+	.y(function(d) {return y(d.close); }); 
+
 // append the svg object to the body of the page
 // appends a 'group' element to 'svg'
 // moves the 'group' element to the top left margin so each data point
@@ -55,6 +61,12 @@ d3.csv("data.csv", function(error, data) {
 		.data([data])
 		.attr("class", "line")
 		.attr("d", valueline);
+
+	// add the basis line (curvy line)
+	svg.append("path")
+		.data([data])
+		.attr("class", "line")
+		.attr("d", basisline);
 
 	// add the x axis
 	// call() makes drawing happen
